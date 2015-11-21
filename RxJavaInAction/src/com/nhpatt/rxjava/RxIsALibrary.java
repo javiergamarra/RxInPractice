@@ -83,6 +83,7 @@ public class RxIsALibrary {
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
                 .filter((s) -> s.startsWith("Android"))
+                .take(2)
                 .subscribe(System.out::println);
     }
 
