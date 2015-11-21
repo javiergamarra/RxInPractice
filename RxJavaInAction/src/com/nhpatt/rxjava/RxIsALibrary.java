@@ -87,4 +87,18 @@ public class RxIsALibrary {
                 .subscribe(System.out::println);
     }
 
+    @Test
+    public void accumulatingResults() {
+
+        service.listRepos("nhpatt")
+                .flatMap(Observable::from)
+                .map(Repo::getName)
+                .map((s) -> s.replace("-", " "))
+                .filter((s) -> s.startsWith("Android"))
+                .take(2)
+                .map(String::length)
+                .scan((x, y) -> x * y)
+                .subscribe(System.out::println);
+    }
+
 }
