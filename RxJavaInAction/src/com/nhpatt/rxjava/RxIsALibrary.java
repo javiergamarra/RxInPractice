@@ -35,7 +35,18 @@ public class RxIsALibrary {
                 .build();
 
         GitHubService service = retrofit.create(GitHubService.class);
-        service.listRepos("nhpatt").subscribe(System.out::println);
+        service.listRepos("nhpatt")
+                .subscribe(System.out::println);
+    }
+
+    @Test
+    public void mapTransformsEachElement() {
+        List<String> severalThings = Arrays.asList("1", "2");
+
+        Observable.from(severalThings)
+                .map((s) -> "Element " + s)
+                .subscribe(System.out::println);
+
     }
 
 }
