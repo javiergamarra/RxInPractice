@@ -6,6 +6,7 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
+import rx.schedulers.Schedulers;
 
 import java.util.Arrays;
 import java.util.List;
@@ -148,6 +149,16 @@ public class RxIsALibrary {
     private Repo updateCommit(Repo o, Commit o2) {
         o.setCommit(o2);
         return o;
+    }
+
+    @Test
+    public void schedulersAllowControllingTheThread() {
+
+        service.listRepos("nhpatt")
+                .subscribeOn(Schedulers.immediate())
+                .observeOn(Schedulers.immediate())
+                .subscribe(System.out::println);
+
     }
 
 }
