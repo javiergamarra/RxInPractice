@@ -128,4 +128,26 @@ public class RxIsALibrary {
                 ).subscribe();
     }
 
+    @Test
+    public void retrievingListAndDetail() {
+
+        Observable<Repo> repo = service.listRepos("nhpatt")
+                .flatMap(Observable::from)
+                .take(1);
+
+        Observable<Commit> commit = service.listCommits("nhpatt", "Android")
+                .flatMap(Observable::from)
+                .take(1);
+
+        Observable.zip(repo, commit, this::updateCommit).subscribe(repo1 -> {
+            System.out.println(repo1.getCommit().getUrl());
+        });
+
+    }
+
+    private Repo updateCommit(Repo o, Commit o2) {
+        o.setCommit(o2);
+        return o;
+    }
+
 }
