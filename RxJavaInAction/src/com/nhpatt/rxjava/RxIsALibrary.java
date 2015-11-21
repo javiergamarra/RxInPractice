@@ -1,5 +1,6 @@
 package com.nhpatt.rxjava;
 
+import org.junit.Before;
 import org.junit.Test;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -10,6 +11,17 @@ import java.util.Arrays;
 import java.util.List;
 
 public class RxIsALibrary {
+
+    private Retrofit retrofit;
+
+    @Before
+    public void setUp() {
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.github.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+    }
 
     @Test
     public void anObservableEmitsThings() {
@@ -28,11 +40,6 @@ public class RxIsALibrary {
 
     @Test
     public void aNetworkCallIsAnObservable() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
 
         GitHubService service = retrofit.create(GitHubService.class);
         service.listRepos("nhpatt")
@@ -47,6 +54,24 @@ public class RxIsALibrary {
                 .map(Integer::valueOf)
                 .subscribe(System.out::println);
 
+    }
+
+    @Test
+    public void mapDoesNotWorkWellWithLists() {
+
+        GitHubService service = retrofit.create(GitHubService.class);
+        service.listRepos("nhpatt")
+                .map(Observable::from)
+                .subscribe(System.out::println);
+    }
+
+    @Test
+    public void flatmapCanReturnElementsFromAnObservable() {
+
+        GitHubService service = retrofit.create(GitHubService.class);
+        service.listRepos("nhpatt")
+                .flatMap(Observable::from)
+                .subscribe(System.out::println);
     }
 
 }
