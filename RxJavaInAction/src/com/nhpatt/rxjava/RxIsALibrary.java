@@ -71,6 +71,8 @@ public class RxIsALibrary {
         GitHubService service = retrofit.create(GitHubService.class);
         service.listRepos("nhpatt")
                 .flatMap(Observable::from)
+                .map(Repo::getName)
+                .map((s) -> s.replace("-", " "))
                 .subscribe(System.out::println);
     }
 
