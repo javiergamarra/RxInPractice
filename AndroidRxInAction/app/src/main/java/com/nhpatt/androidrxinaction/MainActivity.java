@@ -5,20 +5,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
 import com.nhpatt.androidrxinaction.retrofit.GitHubService;
 import com.nhpatt.androidrxinaction.retrofit.Repo;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit.Call;
 import retrofit.GsonConverterFactory;
-import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,16 +40,13 @@ public class MainActivity extends AppCompatActivity {
 			.build();
 		GitHubService service = retrofit.create(GitHubService.class);
 
-		Call<List<Repo>> call = service.listReposSync("nhpatt");
-		try {
-			Response<List<Repo>> response = call.execute();
-
-			repos.addAll(response.body());
-		}
-		catch (IOException e) {
-			Log.e("TAG", "Error!", e);
-		}
-
+		service.listRepos("nhpatt")
+			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
+			.subscribe(newRepos -> {
+				repos.addAll(newRepos);
+				adapter.notifyDataSetChanged();
+			});
 	}
 
 	private RepositoryAdapter adapter;
