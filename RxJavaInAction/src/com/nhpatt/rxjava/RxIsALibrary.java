@@ -8,10 +8,7 @@ public class RxIsALibrary {
 
     @Test
     public void anObservableEmitsThings() {
-        Observable<String> myObs = Observable.create(subscriber -> {
-            subscriber.onNext("Hi!");
-            subscriber.onCompleted();
-        });
+        Observable<String> myObs = Observable.just("Hi!");
 
         Subscriber<String> mySubs = new Subscriber<String>() {
             @Override
