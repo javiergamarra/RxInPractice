@@ -8,12 +8,9 @@ public class RxIsALibrary {
 
     @Test
     public void anObservableEmitsThings() {
-        Observable<String> myObs = Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                subscriber.onNext("Hi!");
-                subscriber.onCompleted();
-            }
+        Observable<String> myObs = Observable.create(subscriber -> {
+            subscriber.onNext("Hi!");
+            subscriber.onCompleted();
         });
 
         Subscriber<String> mySubs = new Subscriber<String>() {
@@ -34,6 +31,5 @@ public class RxIsALibrary {
 
         myObs.subscribe(mySubs);
     }
-
 
 }
