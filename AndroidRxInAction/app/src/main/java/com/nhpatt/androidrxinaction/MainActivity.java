@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import rx.Observable;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -30,10 +31,17 @@ public class MainActivity extends AppCompatActivity {
 		recyclerView.setAdapter(adapter);
 		recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-		github.subscribe(newRepos -> {
+		subscription = github.subscribe(newRepos -> {
 			repos.addAll(newRepos);
 			adapter.notifyDataSetChanged();
 		});
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		subscription.unsubscribe();
 	}
 
 	static Observable<List<Repo>> github = RetrofitService.getGithub().listRepos("nhpatt")
@@ -42,4 +50,5 @@ public class MainActivity extends AppCompatActivity {
 
 	private RepositoryAdapter adapter;
 	private List<Repo> repos = new ArrayList<>();
+	private Subscription subscription;
 }
