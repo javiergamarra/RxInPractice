@@ -44,7 +44,7 @@ public class RxIsALibrary {
         List<String> severalThings = Arrays.asList("1", "2");
 
         Observable.from(severalThings)
-                .map((s) -> "Element " + s)
+                .map(Integer::valueOf)
                 .subscribe(System.out::println);
 
     }
