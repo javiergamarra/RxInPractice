@@ -13,6 +13,7 @@ import java.util.List;
 public class RxIsALibrary {
 
     private Retrofit retrofit;
+    private GitHubService service;
 
     @Before
     public void setUp() {
@@ -21,6 +22,7 @@ public class RxIsALibrary {
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .build();
+        service = retrofit.create(GitHubService.class);
     }
 
     @Test
@@ -41,7 +43,6 @@ public class RxIsALibrary {
     @Test
     public void aNetworkCallIsAnObservable() {
 
-        GitHubService service = retrofit.create(GitHubService.class);
         service.listRepos("nhpatt")
                 .subscribe(System.out::println);
     }
@@ -59,7 +60,6 @@ public class RxIsALibrary {
     @Test
     public void mapDoesNotWorkWellWithLists() {
 
-        GitHubService service = retrofit.create(GitHubService.class);
         service.listRepos("nhpatt")
                 .map(Observable::from)
                 .subscribe(System.out::println);
@@ -68,11 +68,21 @@ public class RxIsALibrary {
     @Test
     public void flatmapCanReturnElementsFromAnObservable() {
 
-        GitHubService service = retrofit.create(GitHubService.class);
         service.listRepos("nhpatt")
                 .flatMap(Observable::from)
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
+                .subscribe(System.out::println);
+    }
+
+    @Test
+    public void filteringResults() {
+
+        service.listRepos("nhpatt")
+                .flatMap(Observable::from)
+                .map(Repo::getName)
+                .map((s) -> s.replace("-", " "))
+                .filter((s) -> s.startsWith("Android"))
                 .subscribe(System.out::println);
     }
 
