@@ -101,4 +101,31 @@ public class RxIsALibrary {
                 .subscribe(System.out::println);
     }
 
+    @Test
+    public void accumulatingResultsTheOldWay() {
+
+        service.listRepos("nhpatt")
+                .map(
+                        (l) -> {
+                            int result = 0;
+                            int i = 0;
+                            int oldLength = 1;
+
+                            for (Repo repo : l) {
+                                String name = repo.getName();
+                                String replacedName = name.replace("-", " ");
+
+                                if (replacedName.startsWith("Android") && i < 2) {
+                                    result = replacedName.length() * oldLength;
+                                    oldLength = result;
+                                    System.out.println(result);
+                                    i++;
+                                }
+
+                            }
+                            return result;
+                        }
+                ).subscribe();
+    }
+
 }
