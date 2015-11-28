@@ -6,6 +6,7 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
+import rx.Scheduler;
 import rx.observers.TestSubscriber;
 import rx.schedulers.Schedulers;
 
@@ -20,6 +21,10 @@ public class RxBasicKoans {
 
     private GitHubService service;
     private TestSubscriber testSubscriber;
+
+    private Integer ___;
+    private String ____;
+    private static final Scheduler _____ = null;
 
     @Before
     public void setUp() {
@@ -39,8 +44,8 @@ public class RxBasicKoans {
         Observable.just("Hi!").subscribe(testSubscriber);
         List<Object> dataEmitted = testSubscriber.getOnNextEvents();
 
-        assertThat(dataEmitted, hasSize(equalTo(1)));
-        assertThat(dataEmitted, containsInAnyOrder("Hi!"));
+        assertThat(dataEmitted, hasSize(equalTo(___)));
+        assertThat(dataEmitted, containsInAnyOrder(___));
     }
 
     @Test
@@ -51,21 +56,21 @@ public class RxBasicKoans {
         Observable.from(severalThings).subscribe(testSubscriber);
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, hasSize(equalTo(2)));
-        assertThat(onNextEvents, containsInAnyOrder("2", "1"));
+        assertThat(onNextEvents, hasSize(equalTo(___)));
+        assertThat(onNextEvents, containsInAnyOrder(___, ___));
 
 
         testSubscriber = new TestSubscriber<>();
         Observable.just(severalThings).subscribe(testSubscriber);
         List<Object> onJustNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onJustNextEvents, hasSize(equalTo(1)));
+        assertThat(onJustNextEvents, hasSize(equalTo(___)));
     }
 
     @Test
     public void networkCallsCanBeObservables() {
 
-        service.listRepos("nhpatt").subscribe(testSubscriber);
+        service.listRepos(____).subscribe(testSubscriber);
         List<Object> dataEmitted = testSubscriber.getOnNextEvents();
 
         assertThat(dataEmitted, is(not(empty())));
@@ -73,7 +78,7 @@ public class RxBasicKoans {
 
     @Test
     public void mapTransformsEachElement() {
-        List<String> severalThings = Arrays.asList("1", "2");
+        List<String> severalThings = Arrays.asList(____, ____);
 
         Observable.from(severalThings)
                 .map(Integer::valueOf)
@@ -81,9 +86,8 @@ public class RxBasicKoans {
 
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, contains(1, 2));
+        assertThat(onNextEvents, contains(___, ___));
     }
-
 
     @Test
     public void mapDoesNotWorkWellWithLists() {
@@ -94,9 +98,8 @@ public class RxBasicKoans {
 
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, hasSize(equalTo(1)));
+        assertThat(onNextEvents, hasSize(equalTo(___)));
     }
-
 
     @Test
     public void flatmapCanReturnAnyNumberOfElements() {
@@ -109,7 +112,7 @@ public class RxBasicKoans {
 
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, hasSize(equalTo(30)));
+        assertThat(onNextEvents, hasSize(equalTo(___)));
     }
 
     @Test
@@ -124,7 +127,7 @@ public class RxBasicKoans {
 
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, hasSize(equalTo(5)));
+        assertThat(onNextEvents, hasSize(equalTo(___)));
     }
 
     @Test
@@ -140,7 +143,7 @@ public class RxBasicKoans {
 
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
-        assertThat(onNextEvents, hasSize(equalTo(2)));
+        assertThat(onNextEvents, hasSize(equalTo(___)));
     }
 
     @Test
@@ -159,7 +162,7 @@ public class RxBasicKoans {
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, contains(7, 119));
+        assertThat(onNextEvents, contains(___, ___));
     }
 
     @Test
@@ -197,7 +200,7 @@ public class RxBasicKoans {
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, contains(7, 119));
+        assertThat(onNextEvents, contains(___, ___));
     }
 
     @Test
@@ -214,17 +217,17 @@ public class RxBasicKoans {
         List<Object> onNextEvents = testSubscriber.getOnNextEvents();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, hasSize(56));
+        assertThat(onNextEvents, hasSize(___));
     }
 
     @Test
     public void zipJoinsTwoStreamsByPosition() {
 
-        Observable<Repo> repo = service.listRepos("nhpatt")
+        Observable<Repo> repo = service.listRepos(____)
                 .flatMap(Observable::from)
                 .take(1);
 
-        Observable<Commit> commit = service.listCommits("nhpatt", "Android")
+        Observable<Commit> commit = service.listCommits(____, "Android")
                 .flatMap(Observable::from)
                 .take(1);
 
@@ -233,7 +236,7 @@ public class RxBasicKoans {
         List<Repo> onNextEvents = testSubscriber.getOnNextEvents();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(String.valueOf(onNextEvents.get(0).getCommit()), not(isEmptyOrNullString()));
+        assertThat(String.valueOf(onNextEvents.get(___).getCommit()), not(isEmptyOrNullString()));
     }
 
     private Repo updateCommit(Repo o, Commit o2) {
@@ -243,10 +246,13 @@ public class RxBasicKoans {
 
     @Test
     public void schedulersAllowControllingTheThread() {
-        service.listRepos("nhpatt")
-                .subscribeOn(Schedulers.immediate())
+        service.listRepos(____)
+                .subscribeOn(_____)
                 .observeOn(Schedulers.io())
-                .subscribe(System.out::println);
+                .subscribe(testSubscriber);
 
+        List<Repo> onNextEvents = testSubscriber.getOnNextEvents();
+
+        assertThat(onNextEvents, is(not(empty())));
     }
 }
