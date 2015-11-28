@@ -1,14 +1,15 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.operators;
 
+import com.nhpatt.rxjava.Commit;
+import com.nhpatt.rxjava.GitHubService;
+import com.nhpatt.rxjava.Repo;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.RxJavaCallAdapterFactory;
 import rx.Observable;
-import rx.Scheduler;
 import rx.observers.TestSubscriber;
-import rx.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,14 +18,13 @@ import java.util.List;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-public class RxBasicKoans {
+public class RxOperatorsKoans {
 
     private GitHubService service;
     private TestSubscriber testSubscriber;
 
     private Integer ___;
     private String ____;
-    private static final Scheduler _____ = null;
 
     @Before
     public void setUp() {
@@ -36,44 +36,6 @@ public class RxBasicKoans {
         service = retrofit.create(GitHubService.class);
 
         testSubscriber = new TestSubscriber<>();
-    }
-
-    @Test
-    public void observablesEmitThings() {
-
-        Observable.just("Hi!").subscribe(testSubscriber);
-        List<Object> dataEmitted = testSubscriber.getOnNextEvents();
-
-        assertThat(dataEmitted, hasSize(equalTo(___)));
-        assertThat(dataEmitted, containsInAnyOrder(___));
-    }
-
-    @Test
-    public void observablesEmitSeveralItems() {
-
-        List<String> severalThings = Arrays.asList("1", "2");
-
-        Observable.from(severalThings).subscribe(testSubscriber);
-        List<Object> onNextEvents = testSubscriber.getOnNextEvents();
-
-        assertThat(onNextEvents, hasSize(equalTo(___)));
-        assertThat(onNextEvents, containsInAnyOrder(___, ___));
-
-
-        testSubscriber = new TestSubscriber<>();
-        Observable.just(severalThings).subscribe(testSubscriber);
-        List<Object> onJustNextEvents = testSubscriber.getOnNextEvents();
-
-        assertThat(onJustNextEvents, hasSize(equalTo(___)));
-    }
-
-    @Test
-    public void networkCallsCanBeObservables() {
-
-        service.listRepos(____).subscribe(testSubscriber);
-        List<Object> dataEmitted = testSubscriber.getOnNextEvents();
-
-        assertThat(dataEmitted, is(not(empty())));
     }
 
     @Test
@@ -244,15 +206,4 @@ public class RxBasicKoans {
         return o;
     }
 
-    @Test
-    public void schedulersAllowControllingTheThread() {
-        service.listRepos(____)
-                .subscribeOn(_____)
-                .observeOn(Schedulers.io())
-                .subscribe(testSubscriber);
-
-        List<Repo> onNextEvents = testSubscriber.getOnNextEvents();
-
-        assertThat(onNextEvents, is(not(empty())));
-    }
 }
