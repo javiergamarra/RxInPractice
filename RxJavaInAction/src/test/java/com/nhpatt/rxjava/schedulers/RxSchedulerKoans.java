@@ -13,7 +13,9 @@ import rx.schedulers.Schedulers;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.collection.IsEmptyCollection.empty;
 import static org.junit.Assert.assertThat;
 
 public class RxSchedulerKoans {
