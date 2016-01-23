@@ -12,9 +12,16 @@
 hs_err_pid*
 
 .idea/
+*.iml
 bin/
 .settings/
 
 build/
 .gradle/
 target/
+
+# Eclipse project files
+.classpath
+.project
+.metadata
+.settings
