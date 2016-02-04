@@ -156,7 +156,7 @@ public class RxIsALibrary {
 
         service.listRepos("nhpatt")
                 .subscribeOn(Schedulers.immediate())
-                .observeOn(Schedulers.immediate())
+                .observeOn(Schedulers.io())
                 .subscribe(System.out::println);
 
     }

@@ -2,7 +2,6 @@ package com.nhpatt.rxjava;
 
 public class Repo {
 
-
     private String name;
 
     private Commit commit;
