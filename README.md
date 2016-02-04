@@ -7,7 +7,7 @@ Repository for a workshop about RxJava and RxAndroid
 * RxJava.jar (or imported through maven/gradle/ivy...)
 * Java 8 or Retrolambda
 
-Slides are here: http://kcy.me/29crj
+Latest slides are here: http://kcy.me/2axh3
 
 # Koans
 
