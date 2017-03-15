@@ -1,15 +1,12 @@
 package com.nhpatt.rxjava;
 
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import org.junit.Before;
 import org.junit.Test;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
-import rx.Observable;
-import rx.schedulers.Schedulers;
-
-import java.util.Arrays;
-import java.util.List;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RxIsALibrary {
 
@@ -21,7 +18,7 @@ public class RxIsALibrary {
         retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         service = retrofit.create(GitHubService.class);
     }
@@ -29,15 +26,21 @@ public class RxIsALibrary {
     @Test
     public void anObservableEmitsThings() {
         Observable.just("Hi!")
-                .subscribe(System.out::println, thr -> System.err.println(thr.getMessage()), () -> System.out.println("finished!"));
+                .subscribe(
+                        System.out::println,
+                        thr -> System.err.println(thr.getMessage()),
+                        () -> System.out.println("finished!"));
     }
 
     @Test
     public void anObservableEmitsSeveralThings() {
-        List<String> severalThings = Arrays.asList("1", "2");
+        String[] severalThings = {"1", "2"};
 
-        Observable.from(severalThings)
-                .subscribe(System.out::println, thr -> System.err.println(thr.getMessage()), () -> System.out.println("finished!"));
+        Observable.fromArray(severalThings)
+                .subscribe(
+                        System.out::println,
+                        thr -> System.err.println(thr.getMessage()),
+                        () -> System.out.println("finished!"));
 
     }
 
@@ -50,9 +53,9 @@ public class RxIsALibrary {
 
     @Test
     public void mapTransformsEachElement() {
-        List<String> severalThings = Arrays.asList("1", "2");
+        String[] severalThings = {"1", "2"};
 
-        Observable.from(severalThings)
+        Observable.fromArray(severalThings)
                 .map(Integer::valueOf)
                 .subscribe(System.out::println);
 
@@ -62,7 +65,7 @@ public class RxIsALibrary {
     public void mapDoesNotWorkWellWithLists() {
 
         service.listRepos("nhpatt")
-                .map(Observable::from)
+                .map(Observable::fromIterable)
                 .subscribe(System.out::println);
     }
 
@@ -70,7 +73,7 @@ public class RxIsALibrary {
     public void flatmapCanReturnElementsFromAnObservable() {
 
         service.listRepos("nhpatt")
-                .flatMap(Observable::from)
+                .flatMap(Observable::fromIterable)
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
                 .subscribe(System.out::println);
@@ -80,7 +83,7 @@ public class RxIsALibrary {
     public void filteringResults() {
 
         service.listRepos("nhpatt")
-                .flatMap(Observable::from)
+                .flatMap(Observable::fromIterable)
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
                 .filter((s) -> s.startsWith("Android"))
@@ -92,7 +95,7 @@ public class RxIsALibrary {
     public void accumulatingResults() {
 
         service.listRepos("nhpatt")
-                .flatMap(Observable::from)
+                .flatMap(Observable::fromIterable)
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
                 .filter((s) -> s.startsWith("Android"))
@@ -133,11 +136,11 @@ public class RxIsALibrary {
     public void retrievingListAndDetail() {
 
         Observable<Repo> repo = service.listRepos("nhpatt")
-                .flatMap(Observable::from)
+                .flatMap(Observable::fromIterable)
                 .take(1);
 
         Observable<Commit> commit = service.listCommits("nhpatt", "Android")
-                .flatMap(Observable::from)
+                .flatMap(Observable::fromIterable)
                 .take(1);
 
         Observable.zip(repo, commit, this::updateCommit).subscribe(repo1 -> {
@@ -155,7 +158,7 @@ public class RxIsALibrary {
     public void schedulersAllowControllingTheThread() {
 
         service.listRepos("nhpatt")
-                .subscribeOn(Schedulers.immediate())
+                .subscribeOn(Schedulers.computation())
                 .observeOn(Schedulers.io())
                 .subscribe(System.out::println);
 

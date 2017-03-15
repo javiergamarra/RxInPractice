@@ -1,13 +1,15 @@
 package com.nhpatt.rxjava.basic;
 
 import com.nhpatt.rxjava.GitHubService;
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
-import retrofit.RxJavaCallAdapterFactory;
-import rx.Observable;
-import rx.observers.TestSubscriber;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +35,7 @@ public class RxBasicKoans {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.github.com")
                 .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
         service = retrofit.create(GitHubService.class);
 
@@ -43,8 +45,10 @@ public class RxBasicKoans {
     @Test
     public void observablesEmitThings() {
 
-        Observable.just("Hi!").subscribe(testSubscriber);
-        List<Object> dataEmitted = testSubscriber.getOnNextEvents();
+        Maybe.just("Hi!")
+                .toFlowable()
+                .subscribe(testSubscriber);
+        List<Object> dataEmitted = testSubscriber.values();
 
         assertThat(dataEmitted, hasSize(equalTo(___)));
         assertThat(dataEmitted, containsInAnyOrder(___));
@@ -55,16 +59,20 @@ public class RxBasicKoans {
 
         List<String> severalThings = Arrays.asList("1", "2");
 
-        Observable.from(severalThings).subscribe(testSubscriber);
-        List<Object> onNextEvents = testSubscriber.getOnNextEvents();
+        Observable.fromIterable(severalThings)
+                .toFlowable(BackpressureStrategy.BUFFER)
+                .subscribe(testSubscriber);
+        List<Object> onNextEvents = testSubscriber.values();
 
         assertThat(onNextEvents, hasSize(equalTo(___)));
         assertThat(onNextEvents, containsInAnyOrder(___, ___));
 
 
         testSubscriber = new TestSubscriber<>();
-        Observable.just(severalThings).subscribe(testSubscriber);
-        List<Object> onJustNextEvents = testSubscriber.getOnNextEvents();
+        Observable.just(severalThings)
+                .toFlowable(BackpressureStrategy.BUFFER)
+                .subscribe(testSubscriber);
+        List<Object> onJustNextEvents = testSubscriber.values();
 
         assertThat(onJustNextEvents, hasSize(equalTo(___)));
     }
@@ -72,8 +80,10 @@ public class RxBasicKoans {
     @Test
     public void networkCallsCanBeObservables() {
 
-        service.listRepos(____).subscribe(testSubscriber);
-        List<Object> dataEmitted = testSubscriber.getOnNextEvents();
+        service.listRepos(____)
+                .toFlowable(BackpressureStrategy.BUFFER)
+                .subscribe(testSubscriber);
+        List<Object> dataEmitted = testSubscriber.values();
 
         assertThat(dataEmitted, is(not(empty())));
     }
