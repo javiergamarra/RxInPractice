@@ -4,11 +4,13 @@ import java.util.List;
 
 import retrofit.Call;
 import retrofit.http.GET;
+import retrofit.http.Headers;
 import retrofit.http.Path;
 import rx.Observable;
 
 public interface GitHubService {
 	@GET("/users/{user}/repos")
+	@Headers("User-Agent: app")
 	Observable<List<Repo>> listRepos(@Path("user") String user);
 
 	@GET("/users/{user}/repos")
