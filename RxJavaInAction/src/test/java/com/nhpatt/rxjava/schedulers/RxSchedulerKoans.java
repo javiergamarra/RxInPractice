@@ -42,13 +42,11 @@ public class RxSchedulerKoans {
     @Test
     public void schedulersAllowControllingTheThread() {
 
-        service.listRepos(____)
+        List<Repo> onNextEvents = service.listRepos(____)
                 .subscribeOn(_____)
                 .observeOn(Schedulers.io())
                 .flatMap(Observable::fromIterable)
-                .subscribe(testObserver);
-
-        List<Repo> onNextEvents = testObserver.values();
+                .toList().blockingGet();
 
         assertThat(onNextEvents, is(not(empty())));
     }
