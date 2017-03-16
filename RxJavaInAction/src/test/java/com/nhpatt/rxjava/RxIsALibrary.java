@@ -13,18 +13,9 @@ public class RxIsALibrary {
     private Retrofit retrofit;
     private GitHubService service;
 
-    @Before
-    public void setUp() {
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build();
-        service = retrofit.create(GitHubService.class);
-    }
-
     @Test
     public void anObservableEmitsThings() {
+
         Observable.just("Hi!")
                 .subscribe(
                         System.out::println,
@@ -34,6 +25,7 @@ public class RxIsALibrary {
 
     @Test
     public void anObservableEmitsSeveralThings() {
+
         String[] severalThings = {"1", "2"};
 
         Observable.fromArray(severalThings)
@@ -53,12 +45,12 @@ public class RxIsALibrary {
 
     @Test
     public void mapTransformsEachElement() {
+
         String[] severalThings = {"1", "2"};
 
         Observable.fromArray(severalThings)
                 .map(Integer::valueOf)
                 .subscribe(System.out::println);
-
     }
 
     @Test
@@ -164,4 +156,13 @@ public class RxIsALibrary {
 
     }
 
+    @Before
+    public void setUp() {
+        retrofit = new Retrofit.Builder()
+                .baseUrl("https://api.github.com")
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+        service = retrofit.create(GitHubService.class);
+    }
 }

@@ -46,7 +46,7 @@ public class RxOperatorsKoans {
 
     @Test
     public void mapTransformsEachElement() {
-        List<String> severalThings = Arrays.asList(____, ____);
+        List<String> severalThings = Arrays.asList("1", "2");
 
         Observable.fromIterable(severalThings)
                 .map(Integer::valueOf)
@@ -54,7 +54,7 @@ public class RxOperatorsKoans {
 
         List<Integer> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, contains(___, ___));
+        assertThat(onNextEvents, contains(1, 2));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class RxOperatorsKoans {
 
         List<Repo> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, hasSize(equalTo(___)));
+        assertThat(onNextEvents, hasSize(equalTo(1)));
     }
 
     @Test
@@ -80,7 +80,7 @@ public class RxOperatorsKoans {
 
         List<Object> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, hasSize(equalTo(___)));
+        assertThat(onNextEvents, hasSize(equalTo(30)));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class RxOperatorsKoans {
 
         List<Object> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, hasSize(equalTo(___)));
+        assertThat(onNextEvents, hasSize(equalTo(5)));
     }
 
     @Test
@@ -111,7 +111,7 @@ public class RxOperatorsKoans {
 
         List<Object> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, hasSize(equalTo(___)));
+        assertThat(onNextEvents, hasSize(equalTo(2)));
     }
 
     @Test
@@ -130,7 +130,7 @@ public class RxOperatorsKoans {
         List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, contains(___, ___));
+        assertThat(onNextEvents, contains(7, 119));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class RxOperatorsKoans {
         List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, contains(___, ___));
+        assertThat(onNextEvents, contains(7, 119));
     }
 
     @Test
@@ -186,17 +186,17 @@ public class RxOperatorsKoans {
         List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
-        assertThat(onNextEvents, hasSize(___));
+        assertThat(onNextEvents, hasSize(60));
     }
 
     @Test
     public void zipJoinsTwoStreamsByPosition() {
 
-        Observable<Repo> repo = service.listRepos(____)
+        Observable<Repo> repo = service.listRepos("pedrovgs")
                 .flatMap(Observable::fromIterable)
                 .take(1);
 
-        Observable<Commit> commit = service.listCommits(____, "Android")
+        Observable<Commit> commit = service.listCommits("nhpatt", "Android")
                 .flatMap(Observable::fromIterable)
                 .take(1);
 
@@ -207,7 +207,7 @@ public class RxOperatorsKoans {
 
         assertThat(onNextEvents, is(not(empty())));
         assertThat(
-                String.valueOf(onNextEvents.get(___).getCommit()),
+                String.valueOf(onNextEvents.get(0).getCommit()),
                 not(isEmptyOrNullString()));
     }
 

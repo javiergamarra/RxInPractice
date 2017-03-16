@@ -45,10 +45,10 @@ public class RxBasicKoans {
     public void observablesEmitThings() {
 
         Maybe.just("Hi!").subscribe(testObserver);
-        List<Object> dataEmitted = testObserver.values();
+        List<String> dataEmitted = testObserver.values();
 
-        assertThat(dataEmitted, hasSize(equalTo(___)));
-        assertThat(dataEmitted, containsInAnyOrder(___));
+        assertThat(dataEmitted, hasSize(equalTo(1)));
+        assertThat(dataEmitted, containsInAnyOrder("Hi!"));
     }
 
     @Test
@@ -57,23 +57,23 @@ public class RxBasicKoans {
         List<String> severalThings = Arrays.asList("1", "2");
 
         Observable.fromIterable(severalThings).subscribe(testObserver);
-        List<Object> onNextEvents = testObserver.values();
+        List<String> onNextEvents = testObserver.values();
 
-        assertThat(onNextEvents, hasSize(equalTo(___)));
-        assertThat(onNextEvents, containsInAnyOrder(___, ___));
+        assertThat(onNextEvents, hasSize(equalTo(2)));
+        assertThat(onNextEvents, containsInAnyOrder("1", "2"));
 
 
         testObserver = new TestObserver();
         Observable.just(severalThings).subscribe(testObserver);
-        List<Object> onJustNextEvents = testObserver.values();
+        List<String> onJustNextEvents = testObserver.values();
 
-        assertThat(onJustNextEvents, hasSize(equalTo(___)));
+        assertThat(onJustNextEvents, hasSize(equalTo(1)));
     }
 
     @Test
     public void networkCallsCanBeObservables() {
 
-        service.listRepos(____).subscribe(testObserver);
+        service.listRepos("nhpatt").subscribe(testObserver);
         List<Object> dataEmitted = testObserver.values();
 
         assertThat(dataEmitted, is(not(empty())));
