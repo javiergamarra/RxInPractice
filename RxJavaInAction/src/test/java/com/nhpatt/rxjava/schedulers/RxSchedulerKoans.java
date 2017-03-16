@@ -2,11 +2,10 @@ package com.nhpatt.rxjava.schedulers;
 
 import com.nhpatt.rxjava.GitHubService;
 import com.nhpatt.rxjava.Repo;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
+import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit2.Retrofit;
@@ -24,7 +23,7 @@ public class RxSchedulerKoans {
 
     private static final Scheduler _____ = null;
     private GitHubService service;
-    private TestSubscriber<Repo> testSubscriber;
+    private TestObserver<Repo> testObserver;
     private String ____;
 
     @Before
@@ -37,7 +36,7 @@ public class RxSchedulerKoans {
                 .build();
         service = retrofit.create(GitHubService.class);
 
-        testSubscriber = new TestSubscriber<>();
+        testObserver = new TestObserver();
     }
 
     @Test
@@ -47,10 +46,9 @@ public class RxSchedulerKoans {
                 .subscribeOn(_____)
                 .observeOn(Schedulers.io())
                 .flatMap(Observable::fromIterable)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Repo> onNextEvents = testSubscriber.values();
+        List<Repo> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
     }

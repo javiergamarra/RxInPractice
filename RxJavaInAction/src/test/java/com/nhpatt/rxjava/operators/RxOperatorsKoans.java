@@ -3,9 +3,8 @@ package com.nhpatt.rxjava.operators;
 import com.nhpatt.rxjava.Commit;
 import com.nhpatt.rxjava.GitHubService;
 import com.nhpatt.rxjava.Repo;
-import io.reactivex.BackpressureStrategy;
 import io.reactivex.Observable;
-import io.reactivex.subscribers.TestSubscriber;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit2.Retrofit;
@@ -28,7 +27,7 @@ import static org.junit.Assert.assertThat;
 public class RxOperatorsKoans {
 
     private GitHubService service;
-    private TestSubscriber testSubscriber;
+    private TestObserver testObserver;
 
     private Integer ___;
     private String ____;
@@ -42,7 +41,7 @@ public class RxOperatorsKoans {
                 .build();
         service = retrofit.create(GitHubService.class);
 
-        testSubscriber = new TestSubscriber<>();
+        testObserver = new TestObserver();
     }
 
     @Test
@@ -51,10 +50,9 @@ public class RxOperatorsKoans {
 
         Observable.fromIterable(severalThings)
                 .map(Integer::valueOf)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Integer> onNextEvents = testSubscriber.values();
+        List<Integer> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, contains(___, ___));
     }
@@ -64,10 +62,9 @@ public class RxOperatorsKoans {
 
         service.listRepos("nhpatt")
                 .map(Observable::fromIterable)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Repo> onNextEvents = testSubscriber.values();
+        List<Repo> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, hasSize(equalTo(___)));
     }
@@ -79,10 +76,9 @@ public class RxOperatorsKoans {
                 .flatMap(Observable::fromIterable)
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, hasSize(equalTo(___)));
     }
@@ -95,10 +91,9 @@ public class RxOperatorsKoans {
                 .map(Repo::getName)
                 .map((s) -> s.replace("-", " "))
                 .filter((s) -> s.startsWith("Android"))
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, hasSize(equalTo(___)));
     }
@@ -112,10 +107,9 @@ public class RxOperatorsKoans {
                 .map((s) -> s.replace("-", " "))
                 .filter((s) -> s.startsWith("Android"))
                 .take(2)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, hasSize(equalTo(___)));
     }
@@ -131,10 +125,9 @@ public class RxOperatorsKoans {
                 .take(2)
                 .map(String::length)
                 .scan((x, y) -> x * y)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
         assertThat(onNextEvents, contains(___, ___));
@@ -146,7 +139,7 @@ public class RxOperatorsKoans {
         service.listRepos("nhpatt")
                 .map(
                         (l) -> {
-                            int result = 0;
+                            int result;
                             int i = 0;
                             int oldLength = 1;
                             List<Integer> values = new ArrayList<Integer>();
@@ -169,11 +162,10 @@ public class RxOperatorsKoans {
                             return values;
                         }
                 )
-                .flatMap(integers -> Observable.fromIterable(integers))
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .flatMap(Observable::fromIterable)
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
         assertThat(onNextEvents, contains(___, ___));
@@ -189,10 +181,9 @@ public class RxOperatorsKoans {
                 .flatMap(Observable::fromIterable);
 
         Observable.merge(repos, goodRepos)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Object> onNextEvents = testSubscriber.values();
+        List<Object> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
         assertThat(onNextEvents, hasSize(___));
@@ -210,10 +201,9 @@ public class RxOperatorsKoans {
                 .take(1);
 
         Observable.zip(repo, commit, this::updateCommit)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(testSubscriber);
+                .subscribe(testObserver);
 
-        List<Repo> onNextEvents = testSubscriber.values();
+        List<Repo> onNextEvents = testObserver.values();
 
         assertThat(onNextEvents, is(not(empty())));
         assertThat(
