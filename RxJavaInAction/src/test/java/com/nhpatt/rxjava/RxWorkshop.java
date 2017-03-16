@@ -1,5 +1,6 @@
 package com.nhpatt.rxjava;
 
+import io.reactivex.annotations.NonNull;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit2.Retrofit;
@@ -8,17 +9,16 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RxWorkshop {
 
-    private Retrofit retrofit;
-    private GitHubService service;
+    private TalksService service;
 
     @Before
     public void setUp() {
-        retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.github.com")
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("http://data.agenda.wedeploy.io/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
-        service = retrofit.create(GitHubService.class);
+        service = retrofit.create(TalksService.class);
     }
 
     @Test
@@ -27,6 +27,10 @@ public class RxWorkshop {
 
     @Test
     public void anObservableEmitsSeveralThings() {
+    }
+
+    @Test
+    public void anObservableCanFail() {
     }
 
     @Test
@@ -54,14 +58,26 @@ public class RxWorkshop {
     }
 
     @Test
-    public void accumulatingResultsTheOldWay() {
-    }
-
-    @Test
     public void retrievingListAndDetail() {
     }
 
     @Test
     public void schedulersAllowControllingTheThread() {
+    }
+
+    @Test
+    public void observablesAreLazy() {
+    }
+
+    private void printBestTalk(@NonNull Talk talk) {
+        System.out.println("Best talk: " + talk);
+    }
+
+    private boolean speakerIsAmalia(Talk talk) {
+        return talk.getSpeaker().contains("amalia");
+    }
+
+    private boolean isAGoodTalk(Talk talk) {
+        return talk.getScore() >= 3;
     }
 }
