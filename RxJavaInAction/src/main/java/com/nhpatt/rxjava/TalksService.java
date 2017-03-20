@@ -1,11 +1,10 @@
 package com.nhpatt.rxjava;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import retrofit2.http.Body;
-import retrofit2.http.DELETE;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
+import retrofit2.http.*;
 
 import java.util.List;
 
@@ -14,14 +13,12 @@ public interface TalksService {
     @GET("/talks")
     Single<List<Talk>> listTalks();
 
-    @GET("/talks")
-    Observable<List<Talk>> allTalks();
-
     @DELETE("/talks")
     Observable<Void> deleteTalks();
 
     @POST("/talks")
     Observable<Void> addTalk(@Body Talk talk);
 
-//    http://data.boilerplate-data.wedeploy.io/tasks/?limit=5&sort=[{"id":"desc"}]
+    @GET("/talks")
+    Single<List<Talk>> filterTalks(@Query(value = "search", encoded = true) String search);
 }
