@@ -1,7 +1,5 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.koans;
 
-import com.nhpatt.rxjava.koans.Commit;
-import com.nhpatt.rxjava.koans.Repo;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;

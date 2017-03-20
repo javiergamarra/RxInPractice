@@ -1,6 +1,5 @@
-package com.nhpatt.rxjava.basic;
+package com.nhpatt.rxjava.koans;
 
-import com.nhpatt.rxjava.GitHubService;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;

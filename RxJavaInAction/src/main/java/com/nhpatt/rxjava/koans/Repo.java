@@ -1,4 +1,4 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.koans;
 
 public class Repo {
 

@@ -1,7 +1,5 @@
-package com.nhpatt.rxjava.schedulers;
+package com.nhpatt.rxjava.koans;
 
-import com.nhpatt.rxjava.GitHubService;
-import com.nhpatt.rxjava.Repo;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.observers.TestObserver;

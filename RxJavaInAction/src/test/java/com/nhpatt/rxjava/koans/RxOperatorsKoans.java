@@ -1,8 +1,5 @@
-package com.nhpatt.rxjava.operators;
+package com.nhpatt.rxjava.koans;
 
-import com.nhpatt.rxjava.Commit;
-import com.nhpatt.rxjava.GitHubService;
-import com.nhpatt.rxjava.Repo;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
