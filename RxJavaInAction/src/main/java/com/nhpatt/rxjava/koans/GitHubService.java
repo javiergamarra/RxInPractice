@@ -1,4 +1,4 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.koans;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;

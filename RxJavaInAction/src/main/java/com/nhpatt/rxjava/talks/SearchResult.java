@@ -1,4 +1,4 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.talks;
 
 import java.util.List;
 

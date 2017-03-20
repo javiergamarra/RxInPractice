@@ -1,5 +1,8 @@
-package com.nhpatt.rxjava;
+package com.nhpatt.rxjava.talks;
 
+import com.nhpatt.rxjava.talks.SearchResult;
+import com.nhpatt.rxjava.talks.Talk;
+import com.nhpatt.rxjava.talks.TalksService;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
@@ -85,7 +88,7 @@ public class RxIsALibrary {
     @Test
     public void observablesCanBeCreatedFromANetworkCall() {
 
-        TestObserver<List<Talk>> testObserver = service.listTalks().test();
+        TestObserver<List<Talk>> testObserver = service.talks().test();
 
         testObserver.assertTerminated();
         testObserver.assertNoErrors();
@@ -96,7 +99,7 @@ public class RxIsALibrary {
     @Test
     public void observablesThatReturnListsCanBeMappedToGetTheSize() {
 
-        TestObserver<Integer> testObserver = service.listTalks()
+        TestObserver<Integer> testObserver = service.talks()
                 .map(List::size)
                 .test();
 
@@ -108,7 +111,7 @@ public class RxIsALibrary {
     @Test
     public void observablesThatCreateObservablesCanNotBeMappedEasily() {
 
-        TestObserver<Observable<Talk>> testObserver = service.listTalks()
+        TestObserver<Observable<Talk>> testObserver = service.talks()
                 .map(Observable::fromIterable)
                 .test();
 
@@ -120,7 +123,7 @@ public class RxIsALibrary {
     @Test
     public void observablesOfObservablesCanBeFlatmappedToGetTheUnderlyingObject() {
 
-        TestObserver<Talk> testObserver = service.listTalks()
+        TestObserver<Talk> testObserver = service.talks()
                 .flatMapObservable(Observable::fromIterable)
                 .test();
 
@@ -132,7 +135,7 @@ public class RxIsALibrary {
     @Test
     public void observablesCanBeFiltered() {
 
-        Observable<Long> scores = service.listTalks()
+        Observable<Long> scores = service.talks()
                 .flatMapObservable(Observable::fromIterable)
                 .map(Talk::getScore);
         Integer talkCount = scores.toList().map(List::size).blockingGet();
@@ -147,7 +150,7 @@ public class RxIsALibrary {
     @Test
     public void observablesCanBeReduced() {
 
-        TestObserver<Long> testObserver = service.listTalks()
+        TestObserver<Long> testObserver = service.talks()
                 .flatMapObservable(Observable::fromIterable)
                 .map(Talk::getScore)
                 .filter(x -> x >= 3)
@@ -161,7 +164,7 @@ public class RxIsALibrary {
 
     @Test
     public void iteratorsCanAlsoReduce() {
-        List<Talk> talks = service.listTalks().blockingGet();
+        List<Talk> talks = service.talks().blockingGet();
 
         List<Long> scores = new ArrayList<>();
         for (Talk talk : talks) {
@@ -185,7 +188,7 @@ public class RxIsALibrary {
 
     @Test
     public void iteratorsCanAlsoReduceInAnUglyWay() {
-        List<Talk> talks = service.listTalks().blockingGet();
+        List<Talk> talks = service.talks().blockingGet();
 
         Long sum = 0L;
         for (Talk talk : talks) {
@@ -202,10 +205,10 @@ public class RxIsALibrary {
     public void retrievingListAndDetail() throws UnsupportedEncodingException {
 
         Single<List<Talk>> firstResults = service
-                .filterTalks(getUrlParameters("TDD"))
+                .filter(getUrlParameters("TDD"))
                 .map(SearchResult::getDocuments);
         Single<List<Talk>> secondResults = service
-                .filterTalks(getUrlParameters("Reactive"))
+                .filter(getUrlParameters("Reactive"))
                 .map(SearchResult::getDocuments);
 
         TestSubscriber<List<Talk>> testSubscriber = Single.merge(firstResults, secondResults).test();
@@ -222,7 +225,7 @@ public class RxIsALibrary {
     @Test
     public void schedulersAllowControllingTheThread() {
 
-        TestObserver<List<Talk>> testObserver = service.listTalks()
+        TestObserver<List<Talk>> testObserver = service.talks()
                 .subscribeOn(Schedulers.trampoline())
                 .observeOn(Schedulers.trampoline())
                 .test();
@@ -234,7 +237,7 @@ public class RxIsALibrary {
     @Test
     public void observablesAreLazy() {
 
-        List<Talk> talks = service.listTalks().blockingGet();
+        List<Talk> talks = service.talks().blockingGet();
 
         List<Talk> goodTalks = new ArrayList<>();
         for (Talk talk : talks) {
@@ -246,7 +249,7 @@ public class RxIsALibrary {
 
         printBestTalk(goodTalks.get(0));
 
-        TestObserver<Talk> testObserver = service.listTalks()
+        TestObserver<Talk> testObserver = service.talks()
                 .toObservable()
                 .flatMap(Observable::fromIterable)
                 .doOnNext(System.out::println)
