@@ -1,8 +1,6 @@
 package com.nhpatt.rxjava;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import io.reactivex.Observable;
+import io.reactivex.Completable;
 import io.reactivex.Single;
 import retrofit2.http.*;
 
@@ -13,12 +11,12 @@ public interface TalksService {
     @GET("/talks")
     Single<List<Talk>> listTalks();
 
+    @GET("/talks")
+    Single<SearchResult> filterTalks(@Query(value = "search", encoded = true) String search);
+
     @DELETE("/talks")
-    Observable<Void> deleteTalks();
+    Completable deleteTalks();
 
     @POST("/talks")
-    Observable<Void> addTalk(@Body Talk talk);
-
-    @GET("/talks")
-    Single<List<Talk>> filterTalks(@Query(value = "search", encoded = true) String search);
+    Completable addTalk(@Body Talk talk);
 }
