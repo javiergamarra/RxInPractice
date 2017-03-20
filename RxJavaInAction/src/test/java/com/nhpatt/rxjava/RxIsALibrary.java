@@ -1,20 +1,19 @@
 package com.nhpatt.rxjava;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Consumer;
 import io.reactivex.observers.TestObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.TestSubscriber;
 import org.junit.Before;
 import org.junit.Test;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -200,40 +199,36 @@ public class RxIsALibrary {
 
 
     @Test
-    public void retrievingListAndDetail() {
+    public void retrievingListAndDetail() throws UnsupportedEncodingException {
 
-        //    {"*": {"operator": "fuzzy", "value": {"query": "TDD"}}}
-//    http://data.agenda.wedeploy.io/talks/?search=%7B%22*%22%3A%20%7B%22operator%22%3A%20%22fuzzy%22%2C%20%22value%22%3A%20%7B%22query%22%3A%20%22TDD%22%7D%7D%7D
+        Single<List<Talk>> firstResults = service
+                .filterTalks(getUrlParameters("TDD"))
+                .map(SearchResult::getDocuments);
+        Single<List<Talk>> secondResults = service
+                .filterTalks(getUrlParameters("Reactive"))
+                .map(SearchResult::getDocuments);
 
-        JsonElement search =  new JsonParser().parse("{\"*\": {\"operator\": \"fuzzy\", \"value\": {\"query\": \"TDD\"}}}");
+        TestSubscriber<List<Talk>> testSubscriber = Single.merge(firstResults, secondResults).test();
+        testSubscriber.assertComplete();
+        testSubscriber.assertNoErrors();
+        assertThat(testSubscriber.valueCount(), is(greaterThan(1)));
+    }
 
-
-
-        service.filterTalks("{\"*\": {\"operator\": \"fuzzy\", \"value\": {\"query\": \"TDD\"}}}")
-                .flatMapObservable(Observable::fromIterable)
-                .take(1).subscribe(new Consumer<Talk>() {
-            @Override
-            public void accept(@NonNull Talk talk) throws Exception {
-                System.out.println(talk);
-            }
-        });
-
-//        Observable<Talk> anotherTalks = service.listTalks()
-//                .flatMapObservable(Observable::fromIterable)
-//                .take(1);
-//
-//        Observable.merge(someTalks, anotherTalks).subscribe(System.out::println);
-
+    private String getUrlParameters(String value) throws UnsupportedEncodingException {
+        String query = "{\"*\": {\"operator\": \"fuzzy\", \"value\": {\"query\": \"" + value + "\"}}}";
+        return URLEncoder.encode(query, "UTF-8");
     }
 
     @Test
     public void schedulersAllowControllingTheThread() {
 
-        service.listTalks()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(Schedulers.io())
-                .subscribe(System.out::println);
+        TestObserver<List<Talk>> testObserver = service.listTalks()
+                .subscribeOn(Schedulers.trampoline())
+                .observeOn(Schedulers.trampoline())
+                .test();
 
+        testObserver.assertNoErrors();
+        assertThat(testObserver.valueCount(), is(greaterThan(0)));
     }
 
     @Test
@@ -251,15 +246,17 @@ public class RxIsALibrary {
 
         printBestTalk(goodTalks.get(0));
 
-        service.listTalks()
+        TestObserver<Talk> testObserver = service.listTalks()
                 .toObservable()
                 .flatMap(Observable::fromIterable)
                 .doOnNext(System.out::println)
                 .filter(this::isAGoodTalk)
                 .filter(this::speakerIsAmalia)
                 .firstElement()
-                .subscribe(this::printBestTalk);
+                .test();
 
+        testObserver.assertNoErrors();
+        assertThat(testObserver.valueCount(), is(greaterThan(0)));
     }
 
     private void printBestTalk(@NonNull Talk talk) {
